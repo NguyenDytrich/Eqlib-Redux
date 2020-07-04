@@ -77,3 +77,8 @@ _[Ss]cripts
 # IDE files #
 #############
 *.vs/
+#################
+# Test Coverage #
+#################
+CoverageResult.xml
+coverage/
