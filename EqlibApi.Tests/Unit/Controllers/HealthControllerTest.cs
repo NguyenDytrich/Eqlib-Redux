@@ -1,5 +1,5 @@
-using NUnit.Framework;
 using EqlibApi.Controllers;
+using NUnit.Framework;
 
 namespace EqlibApi.Tests.Unit.Controllers
 {
