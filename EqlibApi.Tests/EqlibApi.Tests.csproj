@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eqlib\EqlibApi.csproj" />
+    <ProjectReference Include="..\EqlibApi\EqlibApi.csproj" />
   </ItemGroup>
 
 </Project>
