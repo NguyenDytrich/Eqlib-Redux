@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EqlibApi.Models;
 using EqlibApi.Models.Db;
+using EqlibApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,23 +14,30 @@ namespace EqlibApi.Controllers
     [ApiController]
     public class CheckoutController : ControllerBase
     {
-        private readonly ApplicationContext context;
-
-        public CheckoutController(ApplicationContext context)
+        private readonly ICheckoutService service;
+        public CheckoutController(ICheckoutService service)
         {
-            this.context = context;
+            this.service = service;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Checkout>>> GetCheckouts()
         {
-            throw new NotImplementedException();
+            return await service.GetAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Checkout>> GetCheckouts(int id)
         {
-            throw new NotImplementedException();
+            var result = await service.GetAsync(c => c.Id == id);
+            if (result.Count == 0)
+            {
+                return new NotFoundResult();
+            }
+            else
+            {
+                return result[0];
+            }
         }
     }
 }
