@@ -30,6 +30,7 @@ namespace EqlibApi.Services
         /// </summary>
         /// <param name="checkout"></param>
         /// <returns>The created checkout object</returns>
+        /// <exception cref="ArgumentException">If ItemIds are invalid.</exception>
         Task<Checkout> CreateAsync(Checkout checkout);
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace EqlibApi.Services
         /// </summary>
         /// <param name="id">An Id to search for.</param>
         /// <returns>Boolean result specifying whether or not an Item by Id exists.</returns>
-        bool ItemExists(int id);
+        // bool ItemExists(int id);
 
         /// <summary>
         /// Checks whether or not a Checkout exists.

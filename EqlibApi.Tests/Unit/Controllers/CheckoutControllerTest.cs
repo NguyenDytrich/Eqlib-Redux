@@ -46,7 +46,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// Test for a valid GET request
         /// </summary>
-        public async Task Get()
+        public async Task Get_Valid()
         {
             var fixture = new Fixture();
             var checkouts = fixture.CreateMany<Checkout>();
@@ -61,7 +61,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// GET a valid checkout by Id
         /// </summary>
-        public async Task GetById()
+        public async Task Get_ById()
         {
             var fixture = new Fixture();
             var checkout = new List<Checkout> { fixture.Create<Checkout>() };
@@ -76,7 +76,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// GET a checkout by Id that does not exist
         /// </summary>
-        public async Task NotFoundGetId()
+        public async Task Get_NotFound()
         {
             serviceMock.Setup(s => s.GetAsync(It.IsAny<Expression<Func<Checkout, bool>>>())).ReturnsAsync(new List<Checkout>());
             var result = await controller.GetCheckouts(2000);
@@ -89,7 +89,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// Test for a valid DELETE request
         /// </summary>
-        public async Task Delete()
+        public async Task Delete_Valid()
         {
             serviceMock.Setup(s => s.CheckoutExists(It.IsAny<int>())).Returns(true);
             var response = await controller.DeleteCheckout(1);
@@ -100,7 +100,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// Test for a non-existant Id DELETE request
         /// </summary>
-        public async Task NotFoundDelete()
+        public async Task Delete_NotFound()
         {
             serviceMock.Setup(s => s.CheckoutExists(It.IsAny<int>())).Returns(false);
             var response = await controller.DeleteCheckout(1);
@@ -113,39 +113,30 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// Test for a valid POST request
         /// </summary>
-        public async Task Post(Checkout checkout)
-        {
-            // All items specified exists
-            serviceMock.Setup(s => s.ItemExists(It.IsAny<int>())).Returns(true);
-            
+        public async Task Post_Valid(Checkout checkout)
+        {   
             // The service succesfully creates and returns the checkoutentry requested.
             serviceMock.Setup(s => s.CreateAsync(It.Is<Checkout>(c => c == checkout)))
                 .ReturnsAsync(checkout);
 
             var result = await controller.PostCheckout(checkout);
             Assert.IsInstanceOf<Checkout>(result.Value);
-
-            // Verify that ItemExists is called exactly the number of times necessary
-            serviceMock.Verify(
-                s => s.ItemExists(It.IsAny<int>()),
-                Times.Exactly(checkout.ItemIds.Count()));
         }
 
         [Test, TestCaseSource("checkoutProvider")]
         /// <summary>
         /// Test for a Checkout with invalid ItemIds
         /// </summary>
-        public async Task BadItemIdsPost(Checkout checkout)
+        public async Task Post_BadItemIds(Checkout checkout)
         {
-            serviceMock.Setup(s => s.ItemExists(It.IsAny<int>())).Returns(false);
+            serviceMock.Setup(s => s.CreateAsync(It.IsAny<Checkout>()))
+                .Throws(new ArgumentException());
 
             var result = await controller.PostCheckout(checkout);
             Assert.IsInstanceOf<BadRequestObjectResult>(result.Result);
 
             // Create method should not be called
-            serviceMock.Verify(s => s.CreateAsync(It.IsAny<Checkout>()), Times.Never);
-            // ItemExists should not be called after it returns false.
-            serviceMock.Verify(s => s.ItemExists(It.IsAny<int>()), Times.Once);
+            serviceMock.Verify(s => s.CreateAsync(It.IsAny<Checkout>()), Times.Once);
         }
         #endregion
     }

@@ -52,17 +52,15 @@ namespace EqlibApi.Controllers
         /// </summary>
         /// <param name="checkout">A Checkout object</param>
         /// <seealso cref="Checkout"/>
-        public async Task<ActionResult<Checkout>> PostCheckout(Checkout checkout)
+        public async Task<ActionResult<Checkout>> PostCheckout([FromBody]Checkout checkout)
         {
-            foreach(var i in checkout.ItemIds)
+            try
             {
-                var exists = service.ItemExists(i);
-                if (!exists)
-                {
-                    return new BadRequestObjectResult($"Item not found for id {i}");
-                }
+                return await service.CreateAsync(checkout);
+            } catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
             }
-            return await service.CreateAsync(checkout);
         }
 
         [HttpDelete("{id}")]
