@@ -17,5 +17,8 @@ namespace EqlibApi.Models.Db
         public DateTime ReturnDate { get; set; }
         public ECheckoutStatus CheckoutStatus { get; set; }
         public ECheckoutApproval ApprovalStatus { get; set; }
+
+        [NotMapped]
+        public IEnumerable<int> ItemIds { get; set; }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using EqlibApi.Models.Db;
 using EqlibApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Controllers
@@ -29,6 +32,7 @@ namespace EqlibApi.Controllers
         /// <summary>
         /// Get a Checkout entry by Id
         /// </summary>
+        /// <param name="id">Target Checkout id</param>
         public async Task<ActionResult<Checkout>> GetCheckouts(int id)
         {
             var result = await service.GetAsync(c => c.Id == id);
@@ -38,17 +42,38 @@ namespace EqlibApi.Controllers
             }
             else
             {
-                return result[0];
+                return result.FirstOrDefault();
             }
+        }
+        
+        [HttpPost]
+        /// <summary>
+        /// Creates a new Checkout entry in the database
+        /// </summary>
+        /// <param name="checkout">A Checkout object</param>
+        /// <seealso cref="Checkout"/>
+        public async Task<ActionResult<Checkout>> PostCheckout(Checkout checkout)
+        {
+            foreach(var i in checkout.ItemIds)
+            {
+                var exists = service.ItemExists(i);
+                if (!exists)
+                {
+                    return new BadRequestObjectResult($"Item not found for id {i}");
+                }
+            }
+            return await service.CreateAsync(checkout);
         }
 
         [HttpDelete("{id}")]
         /// <summary>
         /// Delete a Checkout entry by Id
         /// </summary>
+        /// <returns>404 if no Checkout exists by Id. 200 on success.</returns>
         public async Task<StatusCodeResult> DeleteCheckout(int id)
         {
-            var doesExist = service.IdExists(id);
+            // 
+            var doesExist = service.CheckoutExists(id);
             if (doesExist)
             {
                 await service.DeleteAsync(id);
