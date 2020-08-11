@@ -5,6 +5,7 @@ using EqlibApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,7 +92,6 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// </summary>
         public async Task Delete_Valid()
         {
-            serviceMock.Setup(s => s.CheckoutExists(It.IsAny<int>())).Returns(true);
             var response = await controller.DeleteCheckout(1);
             Assert.IsInstanceOf<NoContentResult>(response);
         }
@@ -102,9 +102,11 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// </summary>
         public async Task Delete_NotFound()
         {
-            serviceMock.Setup(s => s.CheckoutExists(It.IsAny<int>())).Returns(false);
+            serviceMock.Setup(s => s.DeleteAsync(It.IsAny<int>()))
+                .Throws(new ArgumentException());
+
             var response = await controller.DeleteCheckout(1);
-            Assert.IsInstanceOf<NotFoundResult>(response);
+            Assert.IsInstanceOf<BadRequestObjectResult>(response);
         }
         #endregion
 

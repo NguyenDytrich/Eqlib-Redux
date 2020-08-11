@@ -68,17 +68,15 @@ namespace EqlibApi.Controllers
         /// Delete a Checkout entry by Id
         /// </summary>
         /// <returns>404 if no Checkout exists by Id. 200 on success.</returns>
-        public async Task<StatusCodeResult> DeleteCheckout(int id)
+        public async Task<ActionResult> DeleteCheckout(int id)
         {
-            // 
-            var doesExist = service.CheckoutExists(id);
-            if (doesExist)
+            try
             {
                 await service.DeleteAsync(id);
                 return NoContent();
-            } else
+            } catch (ArgumentException e)
             {
-                return NotFound();
+                return BadRequest(e.Message);
             }
         }
     }
