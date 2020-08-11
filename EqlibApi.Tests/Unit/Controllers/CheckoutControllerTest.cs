@@ -1,17 +1,15 @@
-﻿using EqlibApi.Models.Db;
+﻿using AutoFixture;
 using EqlibApi.Controllers;
+using EqlibApi.Models.Db;
 using EqlibApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Moq;
-using AutoFixture;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Controllers
 {
@@ -26,7 +24,8 @@ namespace EqlibApi.Tests.Unit.Controllers
             serviceMock = new Mock<ICheckoutService>();
             controller = new CheckoutController(serviceMock.Object);
         }
-        
+
+        #region Get Tests
         [Test]
         /// <summary>
         /// Test for a valid GET request
@@ -67,5 +66,30 @@ namespace EqlibApi.Tests.Unit.Controllers
             var result = await controller.GetCheckouts(2000);
             Assert.IsInstanceOf<NotFoundResult>(result.Result);
         }
+        #endregion
+
+        #region Delete Tests
+        [Test]
+        /// <summary>
+        /// Test for a valid DELETE request
+        /// </summary>
+        public async Task Delete()
+        {
+            serviceMock.Setup(s => s.IdExists(It.IsAny<int>())).Returns(true);
+            var response = await controller.DeleteCheckout(1);
+            Assert.IsInstanceOf<NoContentResult>(response);
+        }
+
+        [Test]
+        /// <summary>
+        /// Test for a non-existant Id DELETE request
+        /// </summary>
+        public async Task NotFoundDelete()
+        {
+            serviceMock.Setup(s => s.IdExists(It.IsAny<int>())).Returns(false);
+            var response = await controller.DeleteCheckout(1);
+            Assert.IsInstanceOf<NotFoundResult>(response);
+        }
+        #endregion
     }
 }

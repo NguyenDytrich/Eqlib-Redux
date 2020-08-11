@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EqlibApi.Models;
-using EqlibApi.Models.Db;
+﻿using EqlibApi.Models.Db;
 using EqlibApi.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EqlibApi.Controllers
 {
@@ -21,12 +17,18 @@ namespace EqlibApi.Controllers
         }
 
         [HttpGet]
+        /// <summary>
+        /// Get all Checkout entries
+        /// </summary>
         public async Task<ActionResult<IEnumerable<Checkout>>> GetCheckouts()
         {
             return await service.GetAsync();
         }
 
         [HttpGet("{id}")]
+        /// <summary>
+        /// Get a Checkout entry by Id
+        /// </summary>
         public async Task<ActionResult<Checkout>> GetCheckouts(int id)
         {
             var result = await service.GetAsync(c => c.Id == id);
@@ -37,6 +39,23 @@ namespace EqlibApi.Controllers
             else
             {
                 return result[0];
+            }
+        }
+
+        [HttpDelete("{id}")]
+        /// <summary>
+        /// Delete a Checkout entry by Id
+        /// </summary>
+        public async Task<StatusCodeResult> DeleteCheckout(int id)
+        {
+            var doesExist = service.IdExists(id);
+            if (doesExist)
+            {
+                await service.DeleteAsync(id);
+                return NoContent();
+            } else
+            {
+                return NotFound();
             }
         }
     }
