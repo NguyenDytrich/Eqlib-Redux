@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EqlibApi.Models.Db
 {
-    public class Checkout
+    public class Checkout : ICheckoutRequest
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -24,5 +24,14 @@ namespace EqlibApi.Models.Db
         [NotMapped]
         [Required]
         public IEnumerable<int> ItemIds { get; set; }
+    }
+
+    public interface ICheckoutRequest
+    {
+        DateTime CheckoutDate { get; set; }
+        DateTime DueDate { get; set; }
+        DateTime ReturnDate { get; set; }
+        ECheckoutApproval ApprovalStatus { get; set; }
+        IEnumerable<int> ItemIds { get; set; }
     }
 }

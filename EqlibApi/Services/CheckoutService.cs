@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Services
@@ -34,7 +35,7 @@ namespace EqlibApi.Services
         /// <param name="checkout"></param>
         /// <returns>The created checkout object</returns>
         /// <exception cref="ArgumentException">If ItemIds are invalid.</exception>
-        Task<Checkout> CreateAsync(Checkout checkout);
+        Task<Checkout> CreateAsync(ICheckoutRequest checkout);
 
     }
     public class CheckoutService : ICheckoutService
@@ -46,25 +47,32 @@ namespace EqlibApi.Services
             this.context = context;
         }
 
-        public Task<List<Checkout>> GetAsync()
+        public async Task<List<Checkout>> GetAsync()
         {
             var checkouts = context.Checkouts;
-            return checkouts.ToListAsync();
+            return await checkouts.ToListAsync();
         }
 
-        public Task<List<Checkout>> GetAsync(Expression<Func<Checkout, bool>> filter)
+        public async Task<List<Checkout>> GetAsync(Expression<Func<Checkout, bool>> filter)
         {
-            return context.Checkouts.Where(filter).Select(c => c).ToListAsync();
+            return await context.Checkouts.Where(filter).Select(c => c).ToListAsync();
         }
 
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Checkout> CreateAsync(Checkout checkout)
+        public Task<Checkout> CreateAsync(ICheckoutRequest checkout)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var checkout = await context.Checkouts.FindAsync(id);
+            if(checkout != null)
+            {
+                context.Checkouts.Remove(checkout);
+            } else
+            {
+                throw new ArgumentException("Checkout not found.");
+            }
         }
 
         /// <summary>
