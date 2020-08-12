@@ -1,6 +1,9 @@
-﻿using EqlibApi.Models.Db;
+﻿using EqlibApi.Models;
+using EqlibApi.Models.Db;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -21,7 +24,7 @@ namespace EqlibApi.Services
         /// </summary>
         /// <param name="filterby">An expression that returns a boolean.</param>
         /// <returns>A list of Checkout objects</returns>
-        Task<List<Checkout>> GetAsync(Expression<Func<Checkout, bool>> filterby);
+        Task<List<Checkout>> GetAsync(Expression<Func<Checkout, bool>> filter);
 
         Task DeleteAsync(int id);
 
@@ -33,21 +36,55 @@ namespace EqlibApi.Services
         /// <exception cref="ArgumentException">If ItemIds are invalid.</exception>
         Task<Checkout> CreateAsync(Checkout checkout);
 
-        /// <summary>
-        /// Attempts to find an Item entry by the Id specified.
-        /// </summary>
-        /// <param name="id">An Id to search for.</param>
-        /// <returns>Boolean result specifying whether or not an Item by Id exists.</returns>
-        // bool ItemExists(int id);
+    }
+    public class CheckoutService : ICheckoutService
+    {
+        private readonly IApplicationContext context;
+
+        public CheckoutService(IApplicationContext context)
+        {
+            this.context = context;
+        }
+
+        public Task<List<Checkout>> GetAsync()
+        {
+            var checkouts = context.Checkouts;
+            return checkouts.ToListAsync();
+        }
+
+        public Task<List<Checkout>> GetAsync(Expression<Func<Checkout, bool>> filter)
+        {
+            return context.Checkouts.Where(filter).Select(c => c).ToListAsync();
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Checkout> CreateAsync(Checkout checkout)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Checks whether or not a Checkout exists.
         /// <param name="id">An Id integer to search for.</param>
         /// <returns>Boolean result specifying whether or not a Checkout by Id exists.</returns>
         /// </summary>
-        bool CheckoutExists(int id);
+        private bool CheckoutExists(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Checks whether or not a Checkout exists.
+        /// <param name="id">An Id integer to search for.</param>
+        /// <returns>Boolean result specifying whether or not a Checkout by Id exists.</returns>
+        /// </summary>
+        private bool ItemExists(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
-    // public class CheckoutService : ICheckoutService
-    // {
-    // }
 }

@@ -75,9 +75,9 @@ namespace EqlibApi.Tests.Unit.Controllers
 
         [Test]
         /// <summary>
-        /// GET a checkout by Id that does not exist
+        /// GET method handles errors correctly
         /// </summary>
-        public async Task Get_NotFound()
+        public async Task Get_Exception()
         {
             serviceMock.Setup(s => s.GetAsync(It.IsAny<Expression<Func<Checkout, bool>>>())).ReturnsAsync(new List<Checkout>());
             var result = await controller.GetCheckouts(2000);
@@ -98,9 +98,9 @@ namespace EqlibApi.Tests.Unit.Controllers
 
         [Test]
         /// <summary>
-        /// Test for a non-existant Id DELETE request
+        /// DELETE method handles exceptions
         /// </summary>
-        public async Task Delete_NotFound()
+        public async Task Delete_Exception()
         {
             serviceMock.Setup(s => s.DeleteAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
@@ -129,7 +129,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// <summary>
         /// Test for a Checkout with invalid ItemIds
         /// </summary>
-        public async Task Post_BadItemIds(Checkout checkout)
+        public async Task Post_Exception(Checkout checkout)
         {
             serviceMock.Setup(s => s.CreateAsync(It.IsAny<Checkout>()))
                 .Throws(new ArgumentException());

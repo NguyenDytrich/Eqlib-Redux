@@ -3,7 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EqlibApi.Models
 {
-    public class ApplicationContext : DbContext
+    public interface IApplicationContext
+    {
+        DbSet<ItemGroup> ItemGroups { get; set; }
+        DbSet<Item> Items { get; set; }
+        DbSet<Checkout> Checkouts { get; set; }
+    }
+    public class ApplicationContext : DbContext, IApplicationContext
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
