@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using EqlibApi.Models;
 using EqlibApi.Models.Db;
 using EqlibApi.Services;
@@ -10,6 +11,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Services
@@ -75,7 +77,7 @@ namespace EqlibApi.Tests.Unit.Services
             var mockCheckouts = fixture.Build<Checkout>()
                 .Without(c => c.Id)
                 .Do(x => x.Id = geneartor.Where(x => x != nonExisting).Take(1).FirstOrDefault())
-                .CreateMany();
+                .CreateMany().ToList();
 
             contextMock.Setup(c => c.Checkouts)
                 .Returns(DbSetProvider.CreateSet(mockCheckouts));
@@ -90,13 +92,21 @@ namespace EqlibApi.Tests.Unit.Services
         [Test, TestCaseSource("checkoutRequestProvider")]
         public async Task Create_Valid(Checkout checkout)
         {
-            var mockSet = DbSetProvider.CreateSet(new List<Checkout>());
+            // Empty list
+            var checkoutList = new List<Checkout>();
+
+            // Pass FindAsync params & return the entry found in the checkoutList
+            var _mockSet = DbSetProvider.MockSet(checkoutList);
+            _mockSet.Setup(s => s.FindAsync(It.IsAny<object[]>()))
+                .ReturnsAsync((object[] p) => checkoutList.Find(c => c.Id == (int)p[0]));
+            
+            var mockSet = _mockSet.Object;
             // Setup the mock to be an empty set
             contextMock.Setup(c => c.Checkouts)
                 .Returns(mockSet);
 
             var result = await checkoutService.CreateAsync(checkout);
-            result.Should().BeEquivalentTo(checkout.As<Checkout>());
+            result.Should().BeEquivalentTo(checkout);
             mockSet.Count().Should().Equals(1);
         }
         /*
