@@ -10,8 +10,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Services
@@ -30,6 +28,12 @@ namespace EqlibApi.Tests.Unit.Services
             yield return new TestCaseData(fixture.CreateMany<Checkout>().ToList());
             yield return new TestCaseData(fixture.CreateMany<Checkout>().ToList());
         }
+        public static IEnumerable<TestCaseData> checkoutRequestProvider()
+        {
+            var fixture = new Fixture();
+            var mock = fixture.Build<Checkout>().Without(c => c.CheckoutStatus);
+            yield return new TestCaseData(mock.Create());
+        }
         #endregion
 
         [SetUp]
@@ -43,7 +47,7 @@ namespace EqlibApi.Tests.Unit.Services
         [Test, TestCaseSource("checkoutsProvider")]
         public async Task GetAsync_Valid(List<Checkout> checkouts)
         {
-            contextMock.Setup(c => c.Checkouts).Returns(MockDbContext.CreateSet(checkouts));
+            contextMock.Setup(c => c.Checkouts).Returns(DbSetProvider.CreateSet(checkouts));
 
             var result = await checkoutService.GetAsync();
             result.Should().BeEquivalentTo(checkouts);
@@ -52,7 +56,7 @@ namespace EqlibApi.Tests.Unit.Services
         [Test, TestCaseSource("checkoutsProvider")]
         public async Task GetAsync_ValidById(List<Checkout> checkouts)
         {
-            contextMock.Setup(c => c.Checkouts).Returns(MockDbContext.CreateSet(checkouts));
+            contextMock.Setup(c => c.Checkouts).Returns(DbSetProvider.CreateSet(checkouts));
             var targetId = checkouts.FirstOrDefault().Id;
 
             var result = await checkoutService.GetAsync(c => c.Id == targetId);
@@ -74,27 +78,35 @@ namespace EqlibApi.Tests.Unit.Services
                 .CreateMany();
 
             contextMock.Setup(c => c.Checkouts)
-                .Returns(MockDbContext.CreateSet(mockCheckouts));
+                .Returns(DbSetProvider.CreateSet(mockCheckouts));
 
             // Searching for the nonexistant Id should throw an exception
-            Func<Task> action = async() => await checkoutService.DeleteAsync(nonExisting);
+            Func<Task> action = async () => await checkoutService.DeleteAsync(nonExisting);
             action.Should().Throw<ArgumentException>();
         }
         #endregion
 
         #region Create Tests
-        [Test]
-        public async Task Create_Valid(ICheckoutRequest checkout)
+        [Test, TestCaseSource("checkoutRequestProvider")]
+        public async Task Create_Valid(Checkout checkout)
         {
-            var mockSet = MockDbContext.CreateSet(new List<Checkout>());
+            var mockSet = DbSetProvider.CreateSet(new List<Checkout>());
             // Setup the mock to be an empty set
             contextMock.Setup(c => c.Checkouts)
                 .Returns(mockSet);
 
             var result = await checkoutService.CreateAsync(checkout);
-            result.Should().BeEquivalentTo(checkout);
+            result.Should().BeEquivalentTo(checkout.As<Checkout>());
             mockSet.Count().Should().Equals(1);
         }
+        /*
+        [Test]
+        public async Task Create_ItemUnavailable(ICheckoutRequest checkout)
+        {
+            Func<Task> action = async() => await checkoutService.CreateAsync(checkout);
+            action.Should().Throw<ArgumentException>();
+        }
+        */
         #endregion
     }
 }

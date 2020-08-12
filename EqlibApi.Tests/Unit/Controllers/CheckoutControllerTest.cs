@@ -5,7 +5,6 @@ using EqlibApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +115,7 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// Test for a valid POST request
         /// </summary>
         public async Task Post_Valid(Checkout checkout)
-        {   
+        {
             // The service succesfully creates and returns the checkoutentry requested.
             serviceMock.Setup(s => s.CreateAsync(It.Is<Checkout>(c => c == checkout)))
                 .ReturnsAsync(checkout);

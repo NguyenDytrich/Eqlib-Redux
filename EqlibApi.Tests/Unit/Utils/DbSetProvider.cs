@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using NUnit.Framework.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
 
 namespace EqlibApi.Tests.Unit.Utils
 {
-    class MockDbContext
+    class DbSetProvider
     {
         public static DbSet<T> CreateSet<T>(IEnumerable<T> enumerable) where T : class
         {

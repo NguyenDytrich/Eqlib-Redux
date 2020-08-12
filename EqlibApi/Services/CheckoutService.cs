@@ -35,7 +35,7 @@ namespace EqlibApi.Services
         /// <param name="checkout"></param>
         /// <returns>The created checkout object</returns>
         /// <exception cref="ArgumentException">If ItemIds are invalid.</exception>
-        Task<Checkout> CreateAsync(ICheckoutRequest checkout);
+        Task<Checkout> CreateAsync(Checkout checkout);
 
     }
     public class CheckoutService : ICheckoutService
@@ -58,9 +58,12 @@ namespace EqlibApi.Services
             return await context.Checkouts.Where(filter).Select(c => c).ToListAsync();
         }
 
-        public Task<Checkout> CreateAsync(ICheckoutRequest checkout)
+        public async Task<Checkout> CreateAsync(Checkout checkout)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            await context.Checkouts.AddAsync(checkout);
+            context.SaveChanges();
+            return await context.Checkouts.FindAsync(checkout.Id);
         }
 
         public async Task DeleteAsync(int id)
