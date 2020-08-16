@@ -1,5 +1,7 @@
 ﻿using EqlibApi.Models;
 using EqlibApi.Models.Db;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -41,10 +43,12 @@ namespace EqlibApi.Services
     public class CheckoutService : ICheckoutService
     {
         private readonly IApplicationContext context;
+        private readonly ItemAvailabilityValidator validator;
 
-        public CheckoutService(IApplicationContext context)
+        public CheckoutService(IApplicationContext context, ItemAvailabilityValidator validator)
         {
             this.context = context;
+            this.validator = validator;
         }
 
         public async Task<List<Checkout>> GetAsync()
@@ -60,10 +64,17 @@ namespace EqlibApi.Services
 
         public async Task<Checkout> CreateAsync(Checkout checkout)
         {
-            // throw new NotImplementedException();
-            await context.Checkouts.AddAsync(checkout);
-            context.SaveChanges();
-            return await context.Checkouts.FindAsync(checkout.Id);
+            ValidationResult result = validator.Validate(checkout);
+            if (result.IsValid)
+            {
+                // throw new NotImplementedException();
+                await context.Checkouts.AddAsync(checkout);
+                context.SaveChanges();
+                return await context.Checkouts.FindAsync(checkout.Id);
+            } else
+            {
+                throw new ArgumentException(result.ToString(";"));
+            }
         }
 
         public async Task DeleteAsync(int id)
@@ -98,4 +109,6 @@ namespace EqlibApi.Services
             throw new NotImplementedException();
         }
     }
+
+
 }

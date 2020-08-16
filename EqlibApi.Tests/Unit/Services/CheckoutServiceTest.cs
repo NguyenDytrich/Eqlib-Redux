@@ -5,9 +5,12 @@ using EqlibApi.Models.Db;
 using EqlibApi.Services;
 using EqlibApi.Tests.Unit.Utils;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +22,7 @@ namespace EqlibApi.Tests.Unit.Services
     class CheckoutServiceTest
     {
         private CheckoutService checkoutService;
+        private Mock<ItemAvailabilityValidator> validatorMock;
         private Mock<IApplicationContext> contextMock;
 
         #region Utils
@@ -42,7 +46,8 @@ namespace EqlibApi.Tests.Unit.Services
         protected void SetUp()
         {
             contextMock = new Mock<IApplicationContext>();
-            checkoutService = new CheckoutService(contextMock.Object);
+            validatorMock = new Mock<ItemAvailabilityValidator>(contextMock.Object);
+            checkoutService = new CheckoutService(contextMock.Object, validatorMock.Object);
         }
 
         #region Get Tests
@@ -92,31 +97,67 @@ namespace EqlibApi.Tests.Unit.Services
         [Test, TestCaseSource("checkoutRequestProvider")]
         public async Task Create_Valid(Checkout checkout)
         {
-            // Empty list
+            // Create a mock DbSet from an empty List
             var checkoutList = new List<Checkout>();
+            var checkoutSetMock = DbSetProvider.MockSet(checkoutList);
 
-            // Pass FindAsync params & return the entry found in the checkoutList
-            var _mockSet = DbSetProvider.MockSet(checkoutList);
-            _mockSet.Setup(s => s.FindAsync(It.IsAny<object[]>()))
+            // When FindAsync is called with any Int...
+            checkoutSetMock.Setup(s => s.FindAsync(It.IsAny<int>()))
+            // Box the the integer for the function call
+            // then aynchrounously return a LINQ Find by unboxing p[0]
                 .ReturnsAsync((object[] p) => checkoutList.Find(c => c.Id == (int)p[0]));
             
-            var mockSet = _mockSet.Object;
-            // Setup the mock to be an empty set
+            // Return the DbSet from the mockSet.
+            // The contextMock.Checkouts returns mockSet, which
+            // in turn proxies checkoutList.Add() to
+            // DbSet.AddAsync().
+            var mockSet = checkoutSetMock.Object;
             contextMock.Setup(c => c.Checkouts)
                 .Returns(mockSet);
+
+            // Validator returns no rerrors
+            validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))
+                .Returns(new ValidationResult());
+
 
             var result = await checkoutService.CreateAsync(checkout);
             result.Should().BeEquivalentTo(checkout);
             mockSet.Count().Should().Equals(1);
         }
-        /*
+
         [Test]
-        public async Task Create_ItemUnavailable(ICheckoutRequest checkout)
+        public async Task Create_ItemNotFound()
         {
-            Func<Task> action = async() => await checkoutService.CreateAsync(checkout);
+            var fixture = new Fixture();
+            var checkout = fixture.Create<Checkout>();
+
+            validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))
+                .Returns(new ValidationResult(
+                    new List<ValidationFailure>()
+                    {
+                        new ValidationFailure("ItemIds", "Item specified by ItemId does not exist.")
+                    }));
+
+            Func<Task> action = async () => await checkoutService.CreateAsync(checkout);
             action.Should().Throw<ArgumentException>();
         }
-        */
+
+        [Test]
+        public async Task Create_ItemNotAvailable()
+        {
+            var fixture = new Fixture();
+            var checkout = fixture.Create<Checkout>();
+
+            validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))
+                .Returns(new ValidationResult(
+                    new List<ValidationFailure>()
+                    {
+                        new ValidationFailure("ItemIds", "Item specified by ItemId is not Available.")
+                    }));
+
+            Func<Task> action = async () => await checkoutService.CreateAsync(checkout);
+            action.Should().Throw<ArgumentException>();
+        }
         #endregion
     }
 }
