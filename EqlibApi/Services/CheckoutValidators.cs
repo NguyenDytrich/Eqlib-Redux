@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Services
 {
-    public class ItemAvailabilityValidator : AbstractValidator<Checkout>
+    public class CheckoutValidators : AbstractValidator<Checkout>
     {
         private readonly IApplicationContext appContext;
-        public ItemAvailabilityValidator(IApplicationContext appContext)
+        public CheckoutValidators(IApplicationContext appContext)
         {
             this.appContext = appContext;
+
+            RuleFor(c => c.ItemIds).Must(i => i.Count() > 0)
+                .WithMessage("Need at least 1 ItemId.");
 
             RuleForEach(c => c.ItemIds).Custom((id, context) =>
             {

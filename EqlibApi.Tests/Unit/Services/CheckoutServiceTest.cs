@@ -22,7 +22,7 @@ namespace EqlibApi.Tests.Unit.Services
     class CheckoutServiceTest
     {
         private CheckoutService checkoutService;
-        private Mock<ItemAvailabilityValidator> validatorMock;
+        private Mock<CheckoutValidators> validatorMock;
         private Mock<IApplicationContext> contextMock;
 
         #region Utils
@@ -46,7 +46,7 @@ namespace EqlibApi.Tests.Unit.Services
         protected void SetUp()
         {
             contextMock = new Mock<IApplicationContext>();
-            validatorMock = new Mock<ItemAvailabilityValidator>(contextMock.Object);
+            validatorMock = new Mock<CheckoutValidators>(contextMock.Object);
             checkoutService = new CheckoutService(contextMock.Object, validatorMock.Object);
         }
 
@@ -126,7 +126,7 @@ namespace EqlibApi.Tests.Unit.Services
         }
 
         [Test]
-        public async Task Create_ItemNotFound()
+        public void Create_ItemNotFound()
         {
             var fixture = new Fixture();
             var checkout = fixture.Create<Checkout>();
@@ -143,7 +143,7 @@ namespace EqlibApi.Tests.Unit.Services
         }
 
         [Test]
-        public async Task Create_ItemNotAvailable()
+        public void Create_ItemNotAvailable()
         {
             var fixture = new Fixture();
             var checkout = fixture.Create<Checkout>();

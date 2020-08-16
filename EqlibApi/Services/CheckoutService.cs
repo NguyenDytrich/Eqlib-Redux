@@ -43,9 +43,9 @@ namespace EqlibApi.Services
     public class CheckoutService : ICheckoutService
     {
         private readonly IApplicationContext context;
-        private readonly ItemAvailabilityValidator validator;
+        private readonly CheckoutValidators validator;
 
-        public CheckoutService(IApplicationContext context, ItemAvailabilityValidator validator)
+        public CheckoutService(IApplicationContext context, CheckoutValidators validator)
         {
             this.context = context;
             this.validator = validator;
