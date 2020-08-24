@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: EqlibApi.Tests/Dockerfile
+    environment:
+      - API_URL=http://api:80
+      - CONNECTION_STRING=todo
+    entrypoint: bash /src/wait_for_it.sh api:80 -t 0 -- dotnet test
+    depends_on:
+      - api
+      - db
+  api:
+    build:
+      context: .
+      dockerfile: EqlibApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING=todo
+    entrypoint: bash /app/wait_for_it.sh db:5432 -t 0 -- dotnet /app/EqlibApi.dll
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  eqlibapi:
+    image: ${DOCKER_REGISTRY-}eqlibapi
+    build:
+      context: .
+      dockerfile: EqlibApi/Dockerfile
