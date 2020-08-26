@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/checkouts")]
     [ApiController]
     public class CheckoutController : ControllerBase
     {

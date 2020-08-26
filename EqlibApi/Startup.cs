@@ -1,4 +1,5 @@
 using EqlibApi.Models;
+using EqlibApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace Eqlib
+namespace EqlibApi
 {
     public class Startup
     {
@@ -23,6 +24,9 @@ namespace Eqlib
         {
             services.AddDbContext<IApplicationContext, ApplicationContext>(c =>
             c.UseNpgsql(Configuration.GetConnectionString("default")));
+
+            services.AddScoped<ICheckoutService, CheckoutService>();
+            services.AddScoped<CheckoutValidators>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
