@@ -14,6 +14,7 @@ using System.Text;
 
 namespace EqlibApi.Tests.Unit.Services
 {
+    [Category("Unit")]
     class CheckoutValidatorsTest
     {
         private Mock<IApplicationContext> contextMock;

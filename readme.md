@@ -4,7 +4,7 @@
 Integration tests are run within a docker-compose environment. This configuration
 is stored in the ```docker-compose-integration.yml``` file. The test suite may be run
 by running
-```docker-compose up -f docker-compose-integration.yml --build --abort-on-container-exit```
+```docker-compose -f docker-compose-integration.yml up --build --abort-on-container-exit```
 from the root directory.
 
 When new migrations are added via EF Core, new SQL scripts must be created through

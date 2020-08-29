@@ -8,7 +8,7 @@ services:
     environment:
       - API_URL=http://api:80
       - CONNECTION_STRING=Host=db;Database=postgres;Username=postgres;Password=password
-    entrypoint: bash /src/wait_for_it.sh db:5432 -t 0 -- dotnet test
+    entrypoint: bash /src/wait_for_it.sh db:5432 -t 0 -- dotnet test --collect:"XPlat Code Coverage"
     depends_on:
       - db
   db:

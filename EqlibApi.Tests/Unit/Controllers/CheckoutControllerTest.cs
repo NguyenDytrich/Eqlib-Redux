@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Controllers
 {
+    [Category("Unit")]
     class CheckoutControllerTest
     {
         private CheckoutController controller;

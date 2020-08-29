@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Services
 {
+    [Category("Unit")]
     class CheckoutServiceTest
     {
         private CheckoutService checkoutService;

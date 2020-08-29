@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Integration
 {
+    [Category("Integration")]
     class HealthTest
     {
         private CustomWebApplicationFactory<EqlibApi.Startup> _factory;
