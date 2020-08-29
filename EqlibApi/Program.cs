@@ -1,8 +1,7 @@
-using EqlibApi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Eqlib
+namespace EqlibApi
 {
     public class Program
     {

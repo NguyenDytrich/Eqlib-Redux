@@ -3,6 +3,7 @@ dotnet test --filter TestCategory="Unit" ^
     /p:CollectCoverage=true ^
     /p:CoverletOutput=..\Coverage\ ^
     /p:CoverletOutputFormat=cobertura ^
+    /p:Exclude=\"[*]EqlibApi.Migrations.*,[EqlibApi.Program]\" ^
     EqlibApi.Tests
 
 dotnet "%userprofile%"\.nuget\packages\ReportGenerator\4.5.6\tools\netcoreapp3.0\ReportGenerator.dll^
