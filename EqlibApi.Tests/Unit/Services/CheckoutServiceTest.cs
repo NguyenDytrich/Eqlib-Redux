@@ -74,7 +74,7 @@ namespace EqlibApi.Tests.Unit.Services
 
         #region Delete Tests
         [Test, TestCase(10), TestCase(100), TestCase(205)]
-        public async Task Delete_IdNotFound(int nonExisting)
+        public void Delete_IdNotFound(int nonExisting)
         {
             var fixture = new Fixture();
             var geneartor = fixture.Create<Generator<int>>();

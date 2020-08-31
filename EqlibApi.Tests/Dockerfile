@@ -2,4 +2,4 @@
 COPY . /src
 WORKDIR /src/EqlibApi.Tests
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /src/wait_for_it.sh \
-    && dotnet restore && dotnet build && dotnet publish
+    && dotnet restore && dotnet build
