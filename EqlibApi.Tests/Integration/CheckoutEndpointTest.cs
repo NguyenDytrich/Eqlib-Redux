@@ -2,6 +2,7 @@
 using EqlibApi.Models;
 using EqlibApi.Models.Db;
 using EqlibApi.Tests.Integration.Utils;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;
@@ -13,15 +14,19 @@ using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Integration
 {
+
+    abstract class CheckoutTestBase
+    {
+        protected CustomWebApplicationFactory<EqlibApi.Startup> _factory;
+        protected ApplicationContext _context;
+        protected string _apiUrl;
+        protected string _endpoint = "/api/v1/checkouts";
+    }
+
     [Category("Integration")]
     [NonParallelizable]
-    class CheckoutEndpointTest
+    class CheckoutEndpointTest : CheckoutTestBase
     {
-        private CustomWebApplicationFactory<EqlibApi.Startup> _factory;
-        private ApplicationContext _context;
-        private string _apiUrl;
-        private string _endpoint = "/api/v1/checkouts";
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -44,25 +49,10 @@ namespace EqlibApi.Tests.Integration
             _factory.Dispose();
         }
 
-        [SetUp]
-        public void SetUp()
+        [TearDown]
+        public void TearDown()
         {
             DbContextTestHelper.ClearEntities(_context);
-        }
-
-        [Test]
-        /// <summary>
-        /// Get request with an empty DB should return an empty string
-        /// </summary>
-        public void Get_WhenEmptyDb()
-        {
-            var client = _factory.CreateClient();
-            
-            var response = Task.Run(() => client.GetAsync(_apiUrl + _endpoint)).Result;
-            response.EnsureSuccessStatusCode();
-            var content = Task.Run(() => response.Content.ReadAsStringAsync()).Result;
-
-            Assert.AreEqual("[]", content);
         }
 
         [Test]
@@ -79,7 +69,6 @@ namespace EqlibApi.Tests.Integration
         }
 
         [Test]
-        [Ignore("Temporary ignore")]
         /// <summary>
         /// Get request should return an array of checkout entries
         /// </summary>
@@ -92,16 +81,66 @@ namespace EqlibApi.Tests.Integration
 
             _context.Items.AddRange(items);
             _context.Checkouts.Add(checkout);
+            _context.SaveChanges();
 
-            // Setup the DB with some mock entries
             var client = _factory.CreateClient();
-
-            var expected = JsonSerializer.Serialize(checkout);
+            var checkoutFromDb = _context.Checkouts.Find(checkout.Id);
 
             var response = await client.GetAsync(_apiUrl + _endpoint);
             response.EnsureSuccessStatusCode();
-            var data = await response.Content.ReadAsStringAsync();
-            Assert.AreEqual(expected, data);
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(jsonString);
+            var serializedJson = JsonSerializer.Deserialize<ExpectedResponse>(jsonString);
+            serializedJson.Checkouts.Should().ContainEquivalentOf(checkoutFromDb, opts => opts.ExcludingNestedObjects());
         }
+    }
+
+    [Category("Integration")]
+    class CheckoutEndpointTest_EmptyDb : CheckoutTestBase
+    {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _factory = new CustomWebApplicationFactory<Startup>();
+            _apiUrl = Environment.GetEnvironmentVariable("API_URL");
+
+            var optsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            optsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+
+            _context = new ApplicationContext(optsBuilder.Options);
+
+            DbContextTestHelper.ClearEntities(_context);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            DbContextTestHelper.ClearEntities(_context);
+            _context.Dispose();
+            _factory.Dispose();
+        }
+
+        [Test]
+        /// <summary>
+        /// Get request with an empty DB should return an empty string
+        /// </summary>
+        public async Task Get_WhenEmptyDb()
+        {
+            var client = _factory.CreateClient();
+
+            var response = await client.GetAsync(_apiUrl + _endpoint);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.AreEqual("{\"checkouts\":[]}", content);
+        }
+    }
+
+    class ExpectedResponse
+    {
+        public IList<Checkout> Checkouts { get; set; }
+
+        public ExpectedResponse() { }
     }
 }

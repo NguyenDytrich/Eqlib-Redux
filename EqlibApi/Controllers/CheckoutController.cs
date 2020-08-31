@@ -23,9 +23,13 @@ namespace EqlibApi.Controllers
         /// <summary>
         /// Get all Checkout entries
         /// </summary>
-        public async Task<ActionResult<IEnumerable<Checkout>>> GetCheckouts()
+        public async Task<ActionResult> GetCheckouts()
         {
-            return await service.GetAsync();
+            var checkouts = await service.GetAsync();
+            return Ok(new Dictionary<string, List<Checkout>>()
+            {
+                {"checkouts", checkouts }
+            });
         }
 
         [HttpGet("{id}")]

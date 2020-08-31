@@ -2,6 +2,7 @@
 using EqlibApi.Controllers;
 using EqlibApi.Models.Db;
 using EqlibApi.Services;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Controllers
@@ -53,9 +55,13 @@ namespace EqlibApi.Tests.Unit.Controllers
             var checkouts = fixture.CreateMany<Checkout>();
             serviceMock.Setup(s => s.GetAsync()).ReturnsAsync(checkouts.ToList());
 
-            var result = await controller.GetCheckouts();
-            Assert.IsInstanceOf<IEnumerable<Checkout>>(result.Value);
-            Assert.AreEqual(checkouts.Count(), result.Value.Count());
+            var result = await controller.GetCheckouts() as OkObjectResult;
+            Assert.IsInstanceOf<OkObjectResult>(result);
+            result.Value.Should().BeAssignableTo<Dictionary<string, List<Checkout>>>();
+
+            var response = (Dictionary<string, List<Checkout>>)result.Value;
+
+            Assert.AreEqual(checkouts.Count(), response["checkouts"].Count());
         }
 
         [Test]
@@ -141,5 +147,10 @@ namespace EqlibApi.Tests.Unit.Controllers
             serviceMock.Verify(s => s.CreateAsync(It.IsAny<Checkout>()), Times.Once);
         }
         #endregion
+    }
+
+    class ExpectedResponse
+    {
+        public ICollection<Checkout> Checkouts { get; set; }
     }
 }
