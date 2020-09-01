@@ -25,5 +25,7 @@ namespace EqlibApi.Models.Db
         [NotMapped]
         [Required]
         public IEnumerable<int> ItemIds { get; set; }
+
+        public Checkout() { }
     }
 }

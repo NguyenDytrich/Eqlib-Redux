@@ -1,16 +1,12 @@
-﻿using AutoFixture;
-using EqlibApi.Models;
+﻿using EqlibApi.Models;
 using EqlibApi.Models.Db;
 using EqlibApi.Models.Enums;
 using EqlibApi.Services;
 using EqlibApi.Tests.Unit.Utils;
 using FluentValidation.TestHelper;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EqlibApi.Tests.Unit.Services
 {
@@ -31,9 +27,10 @@ namespace EqlibApi.Tests.Unit.Services
         [Test]
         public void Item_Valid()
         {
-            var item = new Item() {
+            var item = new Item()
+            {
                 Id = 1,
-                Availability = EAvailability.Available 
+                Availability = EAvailability.Available
             };
 
             var itemSetMock = DbSetProvider.MockSet(new List<Item>() { item });

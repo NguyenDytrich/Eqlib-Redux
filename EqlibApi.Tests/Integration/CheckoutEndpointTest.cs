@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -91,8 +92,12 @@ namespace EqlibApi.Tests.Integration
 
             var jsonString = await response.Content.ReadAsStringAsync();
             Console.WriteLine(jsonString);
-            var serializedJson = JsonSerializer.Deserialize<ExpectedResponse>(jsonString);
-            serializedJson.Checkouts.Should().ContainEquivalentOf(checkoutFromDb, opts => opts.ExcludingNestedObjects());
+            var serializedJson = JsonSerializer.Deserialize<ExpectedResponse>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            serializedJson.Checkouts.Should().ContainEquivalentOf(checkoutFromDb, opts =>
+                opts.Excluding(c => c.Items)
+                    .Excluding(c => c.ItemIds)
+                    .Using<DateTime>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1000))
+                        .WhenTypeIs<DateTime>());
         }
     }
 

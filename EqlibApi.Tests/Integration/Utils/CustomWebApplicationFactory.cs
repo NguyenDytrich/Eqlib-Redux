@@ -9,7 +9,7 @@ using System.Linq;
 namespace EqlibApi.Tests.Integration.Utils
 {
     class CustomWebApplicationFactory<TStartup>
-        : WebApplicationFactory<TStartup> where TStartup: class
+        : WebApplicationFactory<TStartup> where TStartup : class
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Controllers
@@ -49,19 +48,20 @@ namespace EqlibApi.Controllers
                 return result.FirstOrDefault();
             }
         }
-        
+
         [HttpPost]
         /// <summary>
         /// Creates a new Checkout entry in the database
         /// </summary>
         /// <param name="checkout">A Checkout object</param>
         /// <seealso cref="Checkout"/>
-        public async Task<ActionResult<Checkout>> PostCheckout([FromBody]Checkout checkout)
+        public async Task<ActionResult<Checkout>> PostCheckout([FromBody] Checkout checkout)
         {
             try
             {
                 return await service.CreateAsync(checkout);
-            } catch (ArgumentException e)
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }
@@ -78,7 +78,8 @@ namespace EqlibApi.Controllers
             {
                 await service.DeleteAsync(id);
                 return NoContent();
-            } catch (ArgumentException e)
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }

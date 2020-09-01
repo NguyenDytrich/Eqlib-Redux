@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Services
@@ -71,7 +70,8 @@ namespace EqlibApi.Services
                 await context.Checkouts.AddAsync(checkout);
                 context.SaveChanges();
                 return await context.Checkouts.FindAsync(checkout.Id);
-            } else
+            }
+            else
             {
                 throw new ArgumentException(result.ToString(";"));
             }
@@ -80,10 +80,11 @@ namespace EqlibApi.Services
         public async Task DeleteAsync(int id)
         {
             var checkout = await context.Checkouts.FindAsync(id);
-            if(checkout != null)
+            if (checkout != null)
             {
                 context.Checkouts.Remove(checkout);
-            } else
+            }
+            else
             {
                 throw new ArgumentException("Checkout not found.");
             }

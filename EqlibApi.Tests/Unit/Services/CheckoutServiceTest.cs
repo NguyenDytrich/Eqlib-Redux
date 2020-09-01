@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using EqlibApi.Models;
 using EqlibApi.Models.Db;
 using EqlibApi.Services;
@@ -7,14 +6,11 @@ using EqlibApi.Tests.Unit.Utils;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Unit.Services
@@ -107,7 +103,7 @@ namespace EqlibApi.Tests.Unit.Services
             // Box the the integer for the function call
             // then aynchrounously return a LINQ Find by unboxing p[0]
                 .ReturnsAsync((object[] p) => checkoutList.Find(c => c.Id == (int)p[0]));
-            
+
             // Return the DbSet from the mockSet.
             // The contextMock.Checkouts returns mockSet, which
             // in turn proxies checkoutList.Add() to
