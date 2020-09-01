@@ -2,8 +2,8 @@
 {
     public enum ECheckoutApproval
     {
-        Approved,
-        Pending,
-        Denied
+        Approved = 0,
+        Pending = 1,
+        Denied = 2,
     }
 }
