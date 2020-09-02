@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EqlibApi.Tests.Integration
@@ -127,19 +128,18 @@ namespace EqlibApi.Tests.Integration
                 new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json"))).Result;
             response.EnsureSuccessStatusCode();
 
-
             var checkout = _context.Checkouts.FirstOrDefault();
-            var items = _context.Items.ToList();
-            Console.WriteLine(JsonSerializer.Serialize(items));
-            foreach(Item i in items)
+
+            checkout.DueDate.Should().BeSameDateAs((DateTime)jsonBody.DueDate);
+            checkout.CheckoutDate.Should().BeSameDateAs((DateTime)(jsonBody.CheckoutDate == null ? DateTime.Now : jsonBody.CheckoutDate));
+            checkout.ApprovalStatus.Should().Be(jsonBody.ApprovalStatus);
+
+            var items = _context.Items.AsNoTracking().ToList();
+            foreach (Item i in items)
             {
+                Console.WriteLine(JsonSerializer.Serialize(i));
                 Assert.AreEqual(EAvailability.CheckedOut, i.Availability);
             }
-
-            checkout.Items.ToList().Should().BeEquivalentTo(items);
-            checkout.ReturnDate.Should().BeSameDateAs(jsonBody.DueDate);
-            checkout.CheckoutDate.Should().BeSameDateAs(jsonBody.CheckoutDate == null ? DateTime.Now : jsonBody.CheckoutDate);
-            checkout.ApprovalStatus.Should().BeSameAs(jsonBody.ApprovalStatus);
         }
 
         [Test]
@@ -174,9 +174,9 @@ namespace EqlibApi.Tests.Integration
         public class Post_JsonBody
         {
             public List<int> ItemIds { get; set; }
-            public  DateTime DueDate { get; set; }
-            public DateTime CheckoutDate { get; set; }
-            public ECheckoutApproval ApprovalStatus { get; set; }
+            public  DateTime? DueDate { get; set; }
+            public DateTime? CheckoutDate { get; set; }
+            public ECheckoutApproval? ApprovalStatus { get; set; }
 
             public Post_JsonBody() { }
         }

@@ -59,3 +59,28 @@ ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET DEFAULT TIMESTAMP '2020-
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20200902034405_DefaultCheckoutDateToNow', '3.1.7');
 
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" TYPE integer;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" DROP NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" SET DEFAULT 3;
+
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" TYPE timestamp without time zone;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET DEFAULT (NOW());
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200902204736_DefaultCheckoutDate2', '3.1.7');
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200902211623_CheckoutDateDefaultVal3', '3.1.7');
+
+ALTER TABLE "Checkouts" ALTER COLUMN "ReturnDate" TYPE timestamp without time zone;
+ALTER TABLE "Checkouts" ALTER COLUMN "ReturnDate" DROP NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "ReturnDate" DROP DEFAULT;
+
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" TYPE timestamp without time zone;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" DROP NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET DEFAULT (NOW());
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200902213754_CheckoutDateDefaultVal4', '3.1.7');
+

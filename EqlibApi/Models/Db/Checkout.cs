@@ -12,11 +12,10 @@ namespace EqlibApi.Models.Db
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public ICollection<Item> Items { get; set; }
+        public DateTime? CheckoutDate { get; set; }
         [Required]
-        public DateTime CheckoutDate { get; set; }
         public DateTime DueDate { get; set; }
-        [Required]
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         public ECheckoutStatus? CheckoutStatus { get; set; }
         [Required]
         public ECheckoutApproval ApprovalStatus { get; set; }

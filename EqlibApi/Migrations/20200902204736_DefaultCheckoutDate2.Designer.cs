@@ -3,15 +3,17 @@ using System;
 using EqlibApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace EqlibApi.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20200902204736_DefaultCheckoutDate2")]
+    partial class DefaultCheckoutDate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace EqlibApi.Migrations
                     b.Property<int>("ApprovalStatus")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("CheckoutDate")
+                    b.Property<DateTime>("CheckoutDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("NOW()");
@@ -42,7 +44,7 @@ namespace EqlibApi.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime>("ReturnDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");

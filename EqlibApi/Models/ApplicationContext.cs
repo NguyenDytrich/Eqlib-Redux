@@ -28,7 +28,8 @@ namespace EqlibApi.Models
         {
             mb.Entity<Checkout>()
                 .Property(c => c.CheckoutDate)
-                .HasDefaultValue(DateTime.Now);
+                .HasDefaultValueSql("NOW()")
+                .ValueGeneratedOnAdd();
             mb.Entity<Checkout>()
                 .Property(c => c.CheckoutStatus)
                 .HasDefaultValue(ECheckoutStatus.Outstanding);
