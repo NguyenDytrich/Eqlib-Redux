@@ -5,6 +5,6 @@
         Returned = 0,
         Overdue = 1,
         Lost = 2,
-        Checkedout = 3,
+        Outstanding = 3,
     }
 }

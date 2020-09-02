@@ -1,5 +1,7 @@
 ﻿using EqlibApi.Models.Db;
+using EqlibApi.Models.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,5 +23,15 @@ namespace EqlibApi.Models
         public virtual DbSet<ItemGroup> ItemGroups { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Checkout> Checkouts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder mb)
+        {
+            mb.Entity<Checkout>()
+                .Property(c => c.CheckoutDate)
+                .HasDefaultValue(DateTime.Now);
+            mb.Entity<Checkout>()
+                .Property(c => c.CheckoutStatus)
+                .HasDefaultValue(ECheckoutStatus.Outstanding);
+        }
     }
 }

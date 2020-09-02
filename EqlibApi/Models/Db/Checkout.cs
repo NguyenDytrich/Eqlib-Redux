@@ -14,7 +14,6 @@ namespace EqlibApi.Models.Db
         public ICollection<Item> Items { get; set; }
         [Required]
         public DateTime CheckoutDate { get; set; }
-        [Required]
         public DateTime DueDate { get; set; }
         [Required]
         public DateTime ReturnDate { get; set; }

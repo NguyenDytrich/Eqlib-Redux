@@ -46,5 +46,16 @@ CREATE INDEX "IX_Items_CheckoutId" ON "Items" ("CheckoutId");
 CREATE INDEX "IX_Items_ItemGroupId" ON "Items" ("ItemGroupId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20200704212055_InitialDbMigration', '3.1.6');
+VALUES ('20200704212055_InitialDbMigration', '3.1.7');
+
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" TYPE integer;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" DROP NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutStatus" DROP DEFAULT;
+
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" TYPE timestamp without time zone;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET DEFAULT TIMESTAMP '2020-09-01 20:44:05.1298';
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200902034405_DefaultCheckoutDateToNow', '3.1.7');
 

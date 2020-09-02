@@ -66,7 +66,11 @@ namespace EqlibApi.Services
             ValidationResult result = validator.Validate(checkout);
             if (result.IsValid)
             {
-                // throw new NotImplementedException();
+                foreach (int i in checkout.ItemIds) {
+                    var item = await context.Items.FindAsync(i);
+                    item.Availability = Models.Enums.EAvailability.CheckedOut;
+                    context.SaveChanges();
+                 }
                 await context.Checkouts.AddAsync(checkout);
                 context.SaveChanges();
                 return await context.Checkouts.FindAsync(checkout.Id);

@@ -97,6 +97,7 @@ namespace EqlibApi.Tests.Unit.Services
             // Create a mock DbSet from an empty List
             var checkoutList = new List<Checkout>();
             var checkoutSetMock = DbSetProvider.MockSet(checkoutList);
+            var itemSetMock = DbSetProvider.MockSet(new List<Item>());
 
             // When FindAsync is called with any Int...
             checkoutSetMock.Setup(s => s.FindAsync(It.IsAny<int>()))
@@ -104,13 +105,19 @@ namespace EqlibApi.Tests.Unit.Services
             // then aynchrounously return a LINQ Find by unboxing p[0]
                 .ReturnsAsync((object[] p) => checkoutList.Find(c => c.Id == (int)p[0]));
 
+            itemSetMock.Setup(s => s.FindAsync(It.IsAny<int>())).ReturnsAsync((object[] p) => new Item());
+            itemSetMock.Setup(s => s.Update(It.IsAny<Item>()));
+
             // Return the DbSet from the mockSet.
             // The contextMock.Checkouts returns mockSet, which
             // in turn proxies checkoutList.Add() to
             // DbSet.AddAsync().
             var mockSet = checkoutSetMock.Object;
+            var mockItemSet = itemSetMock.Object;
             contextMock.Setup(c => c.Checkouts)
                 .Returns(mockSet);
+            contextMock.Setup(c => c.Items)
+                .Returns(mockItemSet);
 
             // Validator returns no rerrors
             validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))
