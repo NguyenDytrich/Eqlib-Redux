@@ -17,8 +17,7 @@ namespace EqlibApi.Models.Db
         public DateTime DueDate { get; set; }
         public DateTime? ReturnDate { get; set; }
         public ECheckoutStatus? CheckoutStatus { get; set; }
-        [Required]
-        public ECheckoutApproval ApprovalStatus { get; set; }
+        public ECheckoutApproval? ApprovalStatus { get; set; }
 
         [NotMapped]
         [Required]

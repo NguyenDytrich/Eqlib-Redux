@@ -33,6 +33,9 @@ namespace EqlibApi.Models
             mb.Entity<Checkout>()
                 .Property(c => c.CheckoutStatus)
                 .HasDefaultValue(ECheckoutStatus.Outstanding);
+            mb.Entity<Checkout>()
+                .Property(c => c.ApprovalStatus)
+                .HasDefaultValue(ECheckoutApproval.Pending);
         }
     }
 }

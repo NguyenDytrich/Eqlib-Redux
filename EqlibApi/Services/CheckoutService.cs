@@ -83,37 +83,23 @@ namespace EqlibApi.Services
 
         public async Task DeleteAsync(int id)
         {
-            var checkout = await context.Checkouts.FindAsync(id);
+            var checkout = await context.Checkouts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (checkout != null)
             {
                 context.Checkouts.Remove(checkout);
+                foreach(Item i in checkout.Items)
+                {
+                    i.Availability = Models.Enums.EAvailability.Available;
+                }
+                context.SaveChanges();
             }
             else
             {
                 throw new ArgumentException("Checkout not found.");
             }
         }
-
-        /// <summary>
-        /// Checks whether or not a Checkout exists.
-        /// <param name="id">An Id integer to search for.</param>
-        /// <returns>Boolean result specifying whether or not a Checkout by Id exists.</returns>
-        /// </summary>
-        private bool CheckoutExists(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether or not a Checkout exists.
-        /// <param name="id">An Id integer to search for.</param>
-        /// <returns>Boolean result specifying whether or not a Checkout by Id exists.</returns>
-        /// </summary>
-        private bool ItemExists(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
-
-
 }

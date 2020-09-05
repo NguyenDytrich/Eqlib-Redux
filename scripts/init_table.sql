@@ -84,3 +84,17 @@ ALTER TABLE "Checkouts" ALTER COLUMN "CheckoutDate" SET DEFAULT (NOW());
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20200902213754_CheckoutDateDefaultVal4', '3.1.7');
 
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" TYPE integer;
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" SET NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" SET DEFAULT 1;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200904230239_DefaultCheckoutApprovalStatus', '3.1.7');
+
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" TYPE integer;
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" DROP NOT NULL;
+ALTER TABLE "Checkouts" ALTER COLUMN "ApprovalStatus" SET DEFAULT 1;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20200904230617_DefaultCheckoutApprovalStatus1', '3.1.7');
+

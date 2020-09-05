@@ -111,7 +111,7 @@ namespace EqlibApi.Tests.Unit.Controllers
                 .Throws(new ArgumentException());
 
             var response = await controller.DeleteCheckout(1);
-            Assert.IsInstanceOf<BadRequestObjectResult>(response);
+            Assert.IsInstanceOf<NotFoundObjectResult>(response);
         }
         #endregion
 
