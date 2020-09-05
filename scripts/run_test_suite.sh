@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dotnet test \
-	--results-directory "./coverage" \
+	--results-directory "../coverage" \
 	/p:CollectCoverage=true \
 	/p:CoverletOutput=../coverage/ \
 	/p:CoverletOutputFormat=cobertura \
