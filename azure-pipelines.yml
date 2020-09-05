@@ -5,6 +5,7 @@
 
 trigger:
 - dev
+- feature/*
 
 pool:
   vmImage: 'Ubuntu-16.04'
@@ -18,8 +19,8 @@ steps:
   continueOnError: true
 
 - script: |
-    export id=$(docker ps -a -f "name=eqlib-redux_tests" -q | head -1)
-    docker cp $id:/src/coverage .
+    export ID=$(docker ps -a -f "name=eqlib-redux_tests" -q | head -1)
+    docker cp $(ID):/src/coverage .
   displayName: 'copying test results'
 
 - script: docker rmi $(docker images -a -q)
