@@ -23,9 +23,6 @@ steps:
     docker cp $ID:/src/coverage .
   displayName: 'copy results'
 
-
-- script: docker rmi $(docker images -a -q)
-  displayName: 'removing docker images'
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
