@@ -28,7 +28,7 @@ namespace EqlibApi.Services
                 {
                     if (item.Availability != EAvailability.Available)
                     {
-                        context.AddFailure("Item specified by ItemId is not Available.");
+                        context.AddFailure("Item specified by ItemId is not available.");
                     }
                 }
             });

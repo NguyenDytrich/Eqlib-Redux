@@ -175,6 +175,42 @@ namespace EqlibApi.Tests.Integration
         }
 
         [Test]
+        [TestCaseSource("Valid_PostJsonBodies")]
+        public void Post_ItemNotFound(Post_JsonBody jsonBody)
+        {
+            var client = _factory.CreateClient();
+            var fixture = new Fixture();
+            jsonBody.ItemIds = fixture.CreateMany<int>().ToList();
+            var jsonString = JsonSerializer.Serialize(jsonBody);
+
+            var response = Task.Run(() => client.PostAsync(_apiUrl + _endpoint,
+                new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json"))).Result;
+            var content = Task.Run(() => response.Content.ReadAsStringAsync()).Result;
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+            content.Should().Contain("not exist");
+        }
+
+        [Test]
+        [TestCaseSource("Valid_PostJsonBodies")]
+        public void Post_ItemNotAvailable(Post_JsonBody jsonBody)
+        {
+            var client = _factory.CreateClient();
+            var context = DbContextTestHelper.CreateAppContext();
+            var itemFixtures = DbContextTestHelper.PopulateWithItems(context, EAvailability.CheckedOut);
+            var itemIds = itemFixtures.Select(i => i.Id).ToList();
+            jsonBody.ItemIds = itemIds;
+            var jsonString = JsonSerializer.Serialize(jsonBody);
+
+            var response = Task.Run(() => client.PostAsync(_apiUrl + _endpoint,
+                new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json"))).Result;
+            var content = Task.Run(() => response.Content.ReadAsStringAsync()).Result;
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+            content.Should().Contain("not available");
+        }
+
+        [Test]
         public void Post_InvalidReturnDate()
         {
             var context = DbContextTestHelper.CreateAppContext();

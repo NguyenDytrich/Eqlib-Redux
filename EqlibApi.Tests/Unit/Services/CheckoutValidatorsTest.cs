@@ -66,7 +66,7 @@ namespace EqlibApi.Tests.Unit.Services
                 });
 
             result.ShouldHaveValidationErrorFor(c => c.ItemIds)
-                .WithErrorMessage("Item specified by ItemId is not Available.");
+                .WithErrorMessage("Item specified by ItemId is not available.");
         }
         public static IEnumerable<TestCaseData> InvalidItemProvider()
         {
