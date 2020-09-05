@@ -51,10 +51,25 @@ namespace EqlibApi.Controllers
 
         [HttpPost]
         /// <summary>
-        /// Creates a new Checkout entry in the database
+        /// Creates a checkout entity in the ApplicationContext. Unless specified,
+        /// the following fields will have the default values:
+        /// <code>
+        ///     CheckoutDate = DateTime.Now
+        ///     ApprovalStatus = EApprovalStatus.Pending
+        /// </code>
+        /// In order for checkouts to be valid, DueDate and ReturnDates must be
+        /// after the CheckoutDate. All Items referenced by the request must exist
+        /// in the database and be marked as available for checkout.
+        ///
+        /// After the checkout request is validated, it is inserted into the database,
+        /// and all items referenced have their availability changed to Hold by
+        /// default.
         /// </summary>
-        /// <param name="checkout">A Checkout object</param>
+        /// <param name="checkout"></param>
+        /// <returns>500 on validation error or 200 with JSON serialized Checkout object instance</returns>
         /// <seealso cref="Checkout"/>
+        /// <seealso cref="CheckoutService.CreateAsync(Checkout)"/>
+        /// <seealso cref="CheckoutValidators"/>
         public async Task<ActionResult<Checkout>> PostCheckout([FromBody] Checkout checkout)
         {
             try

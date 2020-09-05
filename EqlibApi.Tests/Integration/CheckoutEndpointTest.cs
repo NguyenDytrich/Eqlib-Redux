@@ -151,7 +151,7 @@ namespace EqlibApi.Tests.Integration
             var items = context.Items.AsNoTracking().ToList();
             foreach (Item i in items)
             {
-                Assert.AreEqual(EAvailability.CheckedOut, i.Availability);
+                Assert.AreEqual(EAvailability.Hold, i.Availability);
             }
         }
 

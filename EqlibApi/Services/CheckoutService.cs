@@ -68,7 +68,7 @@ namespace EqlibApi.Services
             {
                 foreach (int i in checkout.ItemIds) {
                     var item = await context.Items.FindAsync(i);
-                    item.Availability = Models.Enums.EAvailability.CheckedOut;
+                    item.Availability = Models.Enums.EAvailability.Hold;
                     context.SaveChanges();
                  }
                 await context.Checkouts.AddAsync(checkout);

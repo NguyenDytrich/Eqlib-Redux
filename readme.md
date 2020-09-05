@@ -1,4 +1,4 @@
-#Running integration tests
+Running integration tests
 ---
 
 Integration tests are run within a docker-compose environment. This configuration
