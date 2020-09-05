@@ -82,3 +82,6 @@ _[Ss]cripts
 #################
 CoverageResult.xml
 coverage/
+
+.DS_Store
+*.swp
