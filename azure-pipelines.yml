@@ -15,13 +15,10 @@ variables:
 
 steps:
 - script: docker-compose -f docker-compose-integration.yml up --build --abort-on-container-exit
-  displayName: 'docker compose up'
+    export ID=$(docker ps -a -f "label=testcontainer" -q | head -1)
+    docker cp $ID:/src/coverage .
+  displayName: 'run tests'
   continueOnError: true
-
-- script: |
-    export ID=$(docker ps -a -f "name=eqlib-redux_tests" -q | head -1)
-    docker cp $(ID):/src/coverage .
-  displayName: 'copying test results'
 
 - script: docker rmi $(docker images -a -q)
   displayName: 'removing docker images'
