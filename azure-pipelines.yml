@@ -35,4 +35,5 @@ steps:
     codeCoverageTool: 'cobertura'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/coverage.cobertura.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+    pathToSources: '$(System.DefaultWorkingDirectory)/EqlibApi
   displayName: 'Publish coverage reports'
