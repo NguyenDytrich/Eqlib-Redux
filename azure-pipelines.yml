@@ -19,7 +19,7 @@ steps:
   continueOnError: true
  
 - script: |
-    export ID=$(docker ps -a -f "label=testcontainer" -q | head -1)
+    export ID=$(docker ps -a -f "label=testcontainer=true" -q | head -1)
     docker cp $ID:/src/coverage .
   displayName: 'copy results'
 

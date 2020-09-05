@@ -11,7 +11,7 @@ RUN chmod +x /src/run_test_suite.sh
 RUN dotnet tool install dotnet-reportgenerator-globaltool --tool-path /tools
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /src/wait_for_it.sh
 
-LABEL testcontainer
+LABEL testcontainer=true
 
 WORKDIR /src/EqlibApi.Tests
 RUN dotnet restore && dotnet build
