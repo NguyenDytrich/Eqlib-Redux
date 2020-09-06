@@ -2,10 +2,10 @@
 {
     public enum EAvailability
     {
-        Available,
-        Hold,
-        Unavailable,
-        CheckedOut,
-        Lost
+        Available = 0,
+        Hold =  1,
+        Unavailable = 2,
+        CheckedOut =  3,
+        Lost =  4
     }
 }

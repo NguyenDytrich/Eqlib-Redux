@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace EqlibApi.Tests.Unit.Controllers
 {
+    [Category("Unit")]
     public class HealthControllerTest
     {
         private HealthController controller;

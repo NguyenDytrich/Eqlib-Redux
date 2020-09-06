@@ -1,12 +1,14 @@
-"%userprofile%"\.nuget\packages\OpenCover\4.7.922\tools\OpenCover.Console.exe^
- -target:"C:\Program Files\dotnet\dotnet.exe"^
- -targetargs:"test EqlibApi.Tests/EqlibApi.Tests.csproj"^
- -filter:"+[EqlibApi*]* -[EqlibApi.Tests]* -[EqlibApi]*.Migrations.*"^
- -register^
- -output:"CoverageResult.xml"
+dotnet test --filter TestCategory="Unit" ^
+    --results-directory ./Coverage ^
+    /p:CollectCoverage=true ^
+    /p:CoverletOutput=..\Coverage\ ^
+    /p:CoverletOutputFormat=cobertura ^
+    /p:Exclude=\"[*]EqlibApi.Migrations.*,[EqlibApi.Program]\" ^
+    EqlibApi.Tests
 
-"%userprofile%"\.nuget\packages\ReportGenerator\4.5.6\tools\netcoreapp3.0\ReportGenerator.exe^
- -reports:CoverageResult.xml^
- -targetdir:coverage
+dotnet "%userprofile%"\.nuget\packages\ReportGenerator\4.5.6\tools\netcoreapp3.0\ReportGenerator.dll^
+    "-reports:Coverage\coverage.cobertura.xml" ^
+    "-targetdir:Coverage"
+    -reporttypes:HTML
 
-start coverage/index.htm
+start .\Coverage\index.htm\

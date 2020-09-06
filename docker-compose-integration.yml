@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: EqlibApi.Tests/Dockerfile
+    environment:
+      - API_URL=http://api:80
+      - CONNECTION_STRING=Host=db;Database=postgres;Username=postgres;Password=password
+    entrypoint: >
+      bash /src/wait_for_it.sh db:5432 -t 0 -- /src/run_test_suite.sh
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./scripts/postgres:/docker-entrypoint-initdb.d

@@ -3,15 +3,17 @@ using System;
 using EqlibApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace EqlibApi.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20200902034405_DefaultCheckoutDateToNow")]
+    partial class DefaultCheckoutDateToNow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,25 +28,21 @@ namespace EqlibApi.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("ApprovalStatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                    b.Property<int>("ApprovalStatus")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime?>("CheckoutDate")
+                    b.Property<DateTime>("CheckoutDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasDefaultValue(new DateTime(2020, 9, 1, 20, 44, 5, 129, DateTimeKind.Local).AddTicks(8000));
 
                     b.Property<int?>("CheckoutStatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(3);
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime>("ReturnDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");

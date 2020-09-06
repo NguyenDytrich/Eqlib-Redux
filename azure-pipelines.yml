@@ -1,0 +1,39 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- dev
+- api/feature/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  solution: '**/*.sln'
+
+steps:
+- script: docker-compose -f docker-compose-integration.yml up --build --abort-on-container-exit
+  displayName: 'run tests'
+  continueOnError: true
+ 
+- script: |
+    export ID=$(docker ps -a -f "label=testcontainer=true" -q | head -1)
+    docker cp $ID:/src/coverage .
+  displayName: 'copy results'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/coverage'
+  displayName: 'Publish test results'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/coverage.cobertura.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+    pathToSources: '$(System.DefaultWorkingDirectory)/EqlibApi'
+  displayName: 'Publish coverage reports'
