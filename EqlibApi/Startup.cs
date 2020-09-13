@@ -1,8 +1,5 @@
-using EqlibApi.GraphQL;
 using EqlibApi.Models;
 using EqlibApi.Services;
-using HotChocolate;
-using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +23,7 @@ namespace EqlibApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<IApplicationContext, ApplicationContext>(c =>
-                c.UseNpgsql(Configuration.GetConnectionString("default")));
+            c.UseNpgsql(Configuration.GetConnectionString("default")));
 
             services.AddScoped<ICheckoutService, CheckoutService>();
             services.AddScoped<CheckoutValidators>();
@@ -36,10 +33,6 @@ namespace EqlibApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Equipment Library API", Version = "v1" });
             });
-            services.AddGraphQL(sp => SchemaBuilder.New()
-                .AddServices(sp)
-                .AddQueryType<GraphQLHello>()
-                .Create());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,9 +60,6 @@ namespace EqlibApi
             {
                 endpoints.MapControllers();
             });
-
-            app.UseGraphQL();
-            app.UsePlayground();
         }
     }
 }
