@@ -85,3 +85,4 @@ coverage/
 
 .DS_Store
 *.swp
+logfile

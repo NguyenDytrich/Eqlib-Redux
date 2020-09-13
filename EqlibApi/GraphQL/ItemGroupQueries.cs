@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EqlibApi.Models;
 using HotChocolate;
 using HotChocolate.Types;
@@ -8,13 +9,10 @@ namespace EqlibApi.GraphQL
     [ExtendObjectType(Name = "Query")]
     public class ItemGroupQueries
     {
-        private readonly ApplicationContext _context;
-        public ItemGroupQueries([Service]ApplicationContext context)
+        public IEnumerable<ItemGroup> GetItemGroups([Service]IApplicationContext _context)
         {
-            _context = context;
+            return _context.ItemGroups;
         }
-
-        public string ItemGroupPlaceholder() => "Placeholder";
     }
 
     public class ItemGroupType : ObjectType<ItemGroup>
