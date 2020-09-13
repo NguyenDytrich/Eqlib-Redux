@@ -26,10 +26,15 @@
     <PackageReference Include="OpenCover" Version="4.7.922" />
     <PackageReference Include="ReportGenerator" Version="4.6.7" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    <PackageReference Include="Snapper" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EqlibApi\EqlibApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Unit\GraphQL\" />
+    <Folder Include="Unit\GraphQL\_snapshots\" />
+  </ItemGroup>
 </Project>
