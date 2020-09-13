@@ -40,6 +40,7 @@ namespace EqlibApi
                 .AddServices(sp)
                 .AddQueryType(d => d.Name("Query"))
                 .AddType<HelloType>()
+                .AddType<ItemGroupType>()
                 .AddType<ItemGroupQueries>()
                 .Create());
         }

@@ -11,9 +11,18 @@ namespace EqlibApi.GraphQL
         private readonly ApplicationContext _context;
         public ItemGroupQueries([Service]ApplicationContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         public string ItemGroupPlaceholder() => "Placeholder";
+    }
+
+    public class ItemGroupType : ObjectType<ItemGroup>
+    {
+        protected override void Configure(IObjectTypeDescriptor<ItemGroup> descriptor)
+        {
+            descriptor.Field(c => c.Inventory)
+                .Ignore();
+        }
     }
 }
