@@ -9,6 +9,7 @@ using Snapper.Attributes;
 
 namespace EqlibApi.Tests.Unit.GraphQL
 {
+    [Category("Unit")]
     public class QueryTest
     {
         [Test]
