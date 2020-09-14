@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoFixture;
 using EqlibApi.GraphQL;
+using EqlibApi.Models;
+using EqlibApi.Tests.Unit.Utils;
+using FluentAssertions;
 using HotChocolate;
 using HotChocolate.Execution;
 using HotChocolate.Resolvers;
@@ -31,14 +36,18 @@ namespace EqlibApi.Tests.Unit.GraphQL
         }
 
         [Test]
-        public async Task ItemGroup_ResolvesFromService()
+        public async Task ItemGroup_Query_GetsAllFromContext()
         {
-            ISchema schema = Schema.Create(c =>
-            {
-                c.RegisterQueryType<ItemGroupType>();
-            });
+            var fixture = new Fixture();
+            var mockContext = new Mock<IApplicationContext>();
+            var itemGroupsList = fixture.CreateMany<ItemGroup>().ToList();
+            mockContext.Setup(c => c.ItemGroups)
+                .Returns(DbSetProvider.CreateSet(itemGroupsList));
 
-            Mock<IResolverContext> mockResolverContext = new Mock<IResolverContext>();
+            var queries = new ItemGroupQueries();
+            var result = queries.GetItemGroups(mockContext.Object);
+
+            result.Should().BeEquivalentTo(itemGroupsList);
         }
     }
 }
