@@ -27,6 +27,8 @@ namespace EqlibApi.Tests.Unit.GraphQL
         }
 
         [Test]
+        [Category("Snapshot")]
+        // [UpdateSnapshots]
         public async Task Queries_MatchSnapshot()
         {
             ISchema schema = SchemaBuilder

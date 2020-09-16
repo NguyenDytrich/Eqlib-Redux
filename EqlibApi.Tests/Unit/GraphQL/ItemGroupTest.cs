@@ -18,9 +18,11 @@ using Snapper.Attributes;
 namespace EqlibApi.Tests.Unit.GraphQL
 {
     [Category("Unit")]
-    public class ItemGroupTypeTest
+    public class ItemGroupTest
     {
         [Test]
+        [Category("Snapshot")]
+        // [UpdateSnapshots]
         /// <summary>
         /// Snapshot test to notify us if the schema changes
         /// </summary>

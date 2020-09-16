@@ -17,5 +17,8 @@ namespace EqlibApi.Models
         public DateTime LastInspected { get; set; }
         public ECondition Condition { get; set; }
         public string Notes { get; set; }
+
+        public int ItemGroupId { get; set; }
+        public ItemGroup ItemGroup { get; set; }
     }
 }

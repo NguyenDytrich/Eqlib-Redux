@@ -35,6 +35,5 @@
 
   <ItemGroup>
     <Folder Include="Unit\GraphQL\" />
-    <Folder Include="Unit\GraphQL\_snapshots\" />
   </ItemGroup>
 </Project>
