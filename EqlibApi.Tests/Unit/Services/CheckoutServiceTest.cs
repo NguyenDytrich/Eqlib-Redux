@@ -21,20 +21,26 @@ namespace EqlibApi.Tests.Unit.Services
         private CheckoutService checkoutService;
         private Mock<CheckoutValidators> validatorMock;
         private Mock<IApplicationContext> contextMock;
+        private Fixture fixture;
 
         #region Utils
         public static IEnumerable<TestCaseData> checkoutsProvider()
         {
-            var fixture = new Fixture();
+            var _fixture = new Fixture();
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            yield return new TestCaseData(fixture.CreateMany<Checkout>().ToList());
-            yield return new TestCaseData(fixture.CreateMany<Checkout>().ToList());
-            yield return new TestCaseData(fixture.CreateMany<Checkout>().ToList());
+            yield return new TestCaseData(_fixture.CreateMany<Checkout>().ToList());
+            yield return new TestCaseData(_fixture.CreateMany<Checkout>().ToList());
+            yield return new TestCaseData(_fixture.CreateMany<Checkout>().ToList());
         }
         public static IEnumerable<TestCaseData> checkoutRequestProvider()
         {
-            var fixture = new Fixture();
-            var mock = fixture.Build<Checkout>().Without(c => c.CheckoutStatus);
+            var _fixture = new Fixture();
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            var mock = _fixture.Build<Checkout>().Without(c => c.CheckoutStatus);
             yield return new TestCaseData(mock.Create());
         }
         #endregion
@@ -45,6 +51,10 @@ namespace EqlibApi.Tests.Unit.Services
             contextMock = new Mock<IApplicationContext>();
             validatorMock = new Mock<CheckoutValidators>(contextMock.Object);
             checkoutService = new CheckoutService(contextMock.Object, validatorMock.Object);
+
+            fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         #region Get Tests
@@ -72,7 +82,6 @@ namespace EqlibApi.Tests.Unit.Services
         [Test, TestCase(10), TestCase(100), TestCase(205)]
         public void Delete_IdNotFound(int nonExisting)
         {
-            var fixture = new Fixture();
             var geneartor = fixture.Create<Generator<int>>();
 
             // Create fixtures, excluding the nonExisting integer from any possible Ids
@@ -132,7 +141,6 @@ namespace EqlibApi.Tests.Unit.Services
         [Test]
         public void Create_ItemNotFound()
         {
-            var fixture = new Fixture();
             var checkout = fixture.Create<Checkout>();
 
             validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))
@@ -149,7 +157,6 @@ namespace EqlibApi.Tests.Unit.Services
         [Test]
         public void Create_ItemNotAvailable()
         {
-            var fixture = new Fixture();
             var checkout = fixture.Create<Checkout>();
 
             validatorMock.Setup(v => v.Validate(It.IsAny<ValidationContext<Checkout>>()))

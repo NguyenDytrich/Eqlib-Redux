@@ -20,9 +20,20 @@ namespace EqlibApi.Tests.Unit.GraphQL
     [Category("Unit")]
     public class ItemGroupTest
     {
+
+        private Fixture fixture;
+
+        [SetUp]
+        public void SetUp()
+        {
+            fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+        }
+
         [Test]
         [Category("Snapshot")]
-        // [UpdateSnapshots]
+        [UpdateSnapshots]
         /// <summary>
         /// Snapshot test to notify us if the schema changes
         /// </summary>
@@ -41,7 +52,6 @@ namespace EqlibApi.Tests.Unit.GraphQL
         [Test]
         public async Task ItemGroup_Query_GetsAllFromContext()
         {
-            var fixture = new Fixture();
             var mockContext = new Mock<IApplicationContext>();
             var itemGroupsList = fixture.CreateMany<ItemGroup>().ToList();
             mockContext.Setup(c => c.ItemGroups)

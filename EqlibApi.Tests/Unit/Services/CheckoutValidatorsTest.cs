@@ -18,13 +18,17 @@ namespace EqlibApi.Tests.Unit.Services
     {
         private Mock<IApplicationContext> contextMock;
         private CheckoutValidators validator;
+        private Fixture fixture;
 
         [SetUp]
         public void SetUp()
         {
             contextMock = new Mock<IApplicationContext>();
             validator = new CheckoutValidators(contextMock.Object);
+            fixture = new Fixture();
 
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [Test]
@@ -108,7 +112,6 @@ namespace EqlibApi.Tests.Unit.Services
         [Test]
         public void DueDate_InvalidRange()
         {
-            var fixture = new Fixture();
             var checkout = fixture.Build<Checkout>()
                 .With(c => c.CheckoutDate, DateTime.Now)
                 .With(c => c.DueDate, DateTime.Now.AddDays(-1))
@@ -127,7 +130,6 @@ namespace EqlibApi.Tests.Unit.Services
         [Test]
         public void ReturnDate_InvalidRange()
         {
-            var fixture = new Fixture();
             var checkout = fixture.Build<Checkout>()
                 .With(c => c.CheckoutDate, DateTime.Now)
                 .With(c => c.DueDate, DateTime.Now.AddDays(1))

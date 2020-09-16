@@ -19,20 +19,23 @@ namespace EqlibApi.Tests.Unit.Controllers
     {
         private CheckoutController controller;
         private Mock<ICheckoutService> serviceMock;
+        private Fixture fixture;
 
         public static IEnumerable<TestCaseData> checkoutProvider()
         {
-            var fixture = new Fixture();
+            var _fixture = new Fixture();
+            _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            yield return new TestCaseData(fixture.Build<Checkout>()
+            yield return new TestCaseData(_fixture.Build<Checkout>()
                 .Without(o => o.Items).Create());
 
             // Case for a Checkout object with multiple item Ids
-            yield return new TestCaseData(fixture.Build<Checkout>()
+            yield return new TestCaseData(_fixture.Build<Checkout>()
                 .Without(o => o.Items)
                 .Do(o =>
                 {
-                    o.ItemIds = fixture.CreateMany<int>();
+                    o.ItemIds = _fixture.CreateMany<int>();
                 }).Create());
         }
 
@@ -41,6 +44,10 @@ namespace EqlibApi.Tests.Unit.Controllers
         {
             serviceMock = new Mock<ICheckoutService>();
             controller = new CheckoutController(serviceMock.Object);
+
+            fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         #region Get Tests
@@ -50,7 +57,6 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// </summary>
         public async Task Get_Valid()
         {
-            var fixture = new Fixture();
             var checkouts = fixture.CreateMany<Checkout>();
             serviceMock.Setup(s => s.GetAsync()).ReturnsAsync(checkouts.ToList());
 
@@ -69,7 +75,6 @@ namespace EqlibApi.Tests.Unit.Controllers
         /// </summary>
         public async Task Get_ById()
         {
-            var fixture = new Fixture();
             var checkout = new List<Checkout> { fixture.Create<Checkout>() };
             serviceMock.Setup(s => s.GetAsync(It.IsAny<Expression<Func<Checkout, bool>>>())).ReturnsAsync(checkout);
 
