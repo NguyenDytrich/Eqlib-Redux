@@ -40,6 +40,9 @@ namespace EqlibApi.Tests.Integration.Utils
         public static IEnumerable<Item> PopulateWithItems(ApplicationContext context)
         {
             var fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
             var fixtures = fixture.CreateMany<Item>();
 
             context.Items.AddRange(fixtures);
@@ -56,6 +59,9 @@ namespace EqlibApi.Tests.Integration.Utils
         public static IEnumerable<Item> PopulateWithItems(ApplicationContext context, EAvailability avail)
         {
             var fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
             var fixtures = fixture.Build<Item>()
                 .With(f => f.Availability, avail)
                 .CreateMany();

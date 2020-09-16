@@ -23,12 +23,16 @@ namespace EqlibApi.Tests.Integration
         //protected ApplicationContext _context;
         protected string _apiUrl;
         protected string _endpoint = "/api/v1/checkouts";
+
     }
 
     [Category("Integration")]
     [NonParallelizable]
     class CheckoutEndpointTest : CheckoutTestBase
     {
+
+        private Fixture fixture;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -46,6 +50,14 @@ namespace EqlibApi.Tests.Integration
 
             _context.Dispose();
             _factory.Dispose();
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            fixture = new Fixture();
+            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
+            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
 
         [TearDown]
@@ -75,7 +87,6 @@ namespace EqlibApi.Tests.Integration
         /// </summary>
         public void Get_Valid()
         {
-            var fixture = new Fixture();
             var context = DbContextTestHelper.CreateAppContext();
             var itemFixtures = DbContextTestHelper.PopulateWithItems(context);
             var checkout = fixture.Build<Checkout>()
@@ -179,7 +190,6 @@ namespace EqlibApi.Tests.Integration
         public void Post_ItemNotFound(Post_JsonBody jsonBody)
         {
             var client = _factory.CreateClient();
-            var fixture = new Fixture();
             jsonBody.ItemIds = fixture.CreateMany<int>().ToList();
             var jsonString = JsonSerializer.Serialize(jsonBody);
 
@@ -244,7 +254,6 @@ namespace EqlibApi.Tests.Integration
             var context = DbContextTestHelper.CreateAppContext();
             var itemFixtures = DbContextTestHelper.PopulateWithItems(context, EAvailability.CheckedOut);
 
-            var fixture = new Fixture();
             var checkout = fixture.Build<Checkout>()
                 .With(c => c.Items, itemFixtures.ToList())
                 .With(c => c.Id, checkoutId)
