@@ -33,7 +33,7 @@ namespace EqlibApi.Tests.Unit.GraphQL
 
         [Test]
         [Category("Snapshot")]
-        [UpdateSnapshots]
+        // [UpdateSnapshots]
         /// <summary>
         /// Snapshot test to notify us if the schema changes
         /// </summary>
